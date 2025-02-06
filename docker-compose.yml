@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  pedidos_db:
+    image: postgres
+    restart: always
+    container_name: pedidos_db
+    ports: 
+      - "5433:5432" 
+    volumes:
+      - pedidos_pgsql:/var/lib/postgresql/data
+    environment:     
+      POSTGRES_USER: ${DB_USER}
+      PGUSER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - pedidos_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      timeout: 10s
+      retries: 3
+  pedidos_api:
+      build:
+        context: .
+        dockerfile: Pedidos.API/Dockerfile
+      container_name: pedidos_api
+      ports:
+        - '7575:80'   
+      depends_on:
+        - pedidos_db
+      networks:
+        - pedidos_network
+        - broker_network
+      environment: 
+        DB_HOST: ${DB_HOST}
+        DB_PORT: ${DB_PORT}
+        DB_USER: ${DB_USER}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_NAME: ${DB_NAME} 
+        BROKER_HOSTNAME: ${BROKER_HOSTNAME}
+        BROKER_PORT: ${BROKER_PORT}
+        BROKER_USERNAME: ${BROKER_USERNAME}
+        BROKER_PASSWORD: ${BROKER_PASSWORD}
+      
+volumes:
+  mongoManagement:
+  pedidos_pgsql:
+
+networks:
+  pedidos_network:
+  broker_network:
+    external: true
+    name: rabbit_broker_network
