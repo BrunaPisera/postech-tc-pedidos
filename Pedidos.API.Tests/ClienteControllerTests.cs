@@ -6,7 +6,7 @@ using Pedidos.UseCases.DTOs;
 using Pedidos.UseCases.Exceptions.Cliente;
 using Pedidos.UseCases.Interfaces;
 
-namespace Cliente.API.Tests.Controllers
+namespace Pedidos.API.Tests
 {
     [TestFixture]
     public class ClienteControllerTests

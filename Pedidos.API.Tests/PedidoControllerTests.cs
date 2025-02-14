@@ -7,7 +7,7 @@ using Pedidos.UseCases.DTOs;
 using Pedidos.UseCases.Exceptions.Produto;
 using Pedidos.UseCases.Interfaces;
 
-namespace Pedido.API.Tests.Controllers
+namespace Pedidos.API.Tests
 {
     [TestFixture]
     public class PedidoControllerTests

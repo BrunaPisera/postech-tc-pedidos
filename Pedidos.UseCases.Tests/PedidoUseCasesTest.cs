@@ -3,6 +3,7 @@ using Pedidos.Core.Entities;
 using Pedidos.Core.Entities.Enums;
 using Pedidos.Core.Entities.ValueObjects;
 using Pedidos.UseCases.DTOs;
+using Pedidos.UseCases.Exceptions.Pedido;
 using Pedidos.UseCases.Gateway;
 
 namespace Pedidos.UseCases.Tests
@@ -211,6 +212,100 @@ namespace Pedidos.UseCases.Tests
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Result.ClienteName, Is.EqualTo(clienteAggregateMock.Nome));
             _pedidoPersistantGatewayMock.Verify(p => p.SavePedidoAsync(It.IsAny<PedidoAggregate>()), Times.Once);
+        }
+
+        [Test]
+        public async Task GetPedidoByIdAsync_ValidId_ReturnsPedidoDto()
+        {
+            var idPedido = Guid.NewGuid();
+            var pedidoAggregate = new PedidoAggregate { Id = idPedido };
+
+            _pedidoPersistantGatewayMock.Setup(x => x.GetPedidoById(idPedido)).ReturnsAsync(pedidoAggregate);
+
+            var result = await _pedidoUseCases.GetPedidoByIdAsync(idPedido);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.IdPedido, Is.EqualTo(idPedido));
+        }
+
+        [Test]
+        public void GetPedidoByIdAsync_InvalidId_ThrowsPedidoNaoEncontradoException()
+        {
+            var idPedido = Guid.NewGuid();
+
+            _pedidoPersistantGatewayMock.Setup(x => x.GetPedidoById(idPedido)).ReturnsAsync((PedidoAggregate)null);
+
+            Assert.ThrowsAsync<PedidoNaoEncontradoException>(async () =>
+                await _pedidoUseCases.GetPedidoByIdAsync(idPedido));
+        }
+
+        [Test]
+        public async Task GetAllPedidosAsync_ReturnsOrderedPedidos()
+        {
+            var pedidos = new List<PedidoAggregate>
+            {
+                new PedidoAggregate { Id = Guid.NewGuid(), HorarioRecebimento = DateTime.Now.AddHours(1) },
+                new PedidoAggregate { Id = Guid.NewGuid(), HorarioRecebimento = DateTime.Now }
+            };
+
+            _pedidoPersistantGatewayMock.Setup(x => x.GetAllPedidos()).ReturnsAsync(pedidos);
+
+            var result = await _pedidoUseCases.GetAllPedidosAsync();
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result[0].HorarioRecebimento, Is.LessThan(result[1].HorarioRecebimento));
+        }
+
+        [Test]
+        public async Task ConfirmaPagamentoAsync_ValidId_ReturnsTrue()
+        {
+            var idPedido = Guid.NewGuid();
+            var pedidoAggregate = new PedidoAggregate { Id = idPedido, PagamentoConfirmado = false };
+
+            _pedidoPersistantGatewayMock.Setup(x => x.GetPedidoById(idPedido)).ReturnsAsync(pedidoAggregate);
+            _pedidoPersistantGatewayMock.Setup(x => x.SavePedidoAsync(pedidoAggregate)).ReturnsAsync(true);
+
+            var result = await _pedidoUseCases.ConfirmaPagamentoAsync(idPedido);
+
+            Assert.That(result, Is.True);
+            Assert.That(pedidoAggregate.PagamentoConfirmado, Is.True);
+        }
+
+        [Test]
+        public void ConfirmaPagamentoAsync_InvalidId_ThrowsPedidoNaoEncontradoException()
+        {
+            var idPedido = Guid.NewGuid();
+
+            _pedidoPersistantGatewayMock.Setup(x => x.GetPedidoById(idPedido)).ReturnsAsync((PedidoAggregate)null);
+
+            Assert.ThrowsAsync<PedidoNaoEncontradoException>(async () =>
+                await _pedidoUseCases.ConfirmaPagamentoAsync(idPedido));
+        }
+
+        [Test]
+        public void GetPedidoByIdAsync_GuidEmpty_ThrowsPedidoNaoEncontradoException()
+        {
+            var idPedido = Guid.Empty;
+
+            _pedidoPersistantGatewayMock.Setup(x => x.GetPedidoById(idPedido))
+                                         .ReturnsAsync((PedidoAggregate)null);
+
+            Assert.ThrowsAsync<PedidoNaoEncontradoException>(async () =>
+                await _pedidoUseCases.GetPedidoByIdAsync(idPedido));
+        }
+
+        // Teste corrigido para ConfirmaPagamentoAsync - Guid.Empty
+        [Test]
+        public void ConfirmaPagamentoAsync_GuidEmpty_ThrowsPedidoNaoEncontradoException()
+        {
+            var idPedido = Guid.Empty;
+
+            _pedidoPersistantGatewayMock.Setup(x => x.GetPedidoById(idPedido))
+                                         .ReturnsAsync((PedidoAggregate)null);
+
+            Assert.ThrowsAsync<PedidoNaoEncontradoException>(async () =>
+                await _pedidoUseCases.ConfirmaPagamentoAsync(idPedido));
         }
     }
 }
