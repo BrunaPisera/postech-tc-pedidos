@@ -1,0 +1,10 @@
+namespace: dev
+
+# Config map
+configmap:
+  name: pedidos-config-map
+  data:
+    DB_HOST: svc-pedidos-db
+    DB_PORT: 5432
+    DB_USER: postgres
+    DB_NAME: pedidosdb
