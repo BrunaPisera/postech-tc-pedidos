@@ -7,7 +7,7 @@ using Pedidos.UseCases.DTOs;
 using Pedidos.UseCases.Exceptions.Produto;
 using Pedidos.UseCases.Interfaces;
 
-namespace Produto.API.Tests.Controllers
+namespace Pedidos.API.Tests
 {
     [TestFixture]
     public class ProdutoControllerTests
@@ -173,6 +173,141 @@ namespace Produto.API.Tests.Controllers
             Assert.That(okResult, Is.Not.Null);
             Assert.That(okResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
             Assert.That(okResult.Value, Is.EqualTo(produtoAtualizado));
+        }
+
+        [Test]
+        public async Task BuscaProdutos_ThrowsException_ReturnsInternalServerError()
+        {
+            _mockProdutoApplication.Setup(x => x.BuscaProdutosAsync())
+                                .ThrowsAsync(new Exception("Erro inesperado"));
+
+            var result = await _controller.BuscaProdutos();
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Erro ao processar a requisição, tente novamente mais tarde."));
+        }
+
+        [Test]
+        public async Task BuscaProdutosPorCategoria_ThrowsCategoriaInvalidaException_ReturnsBadRequest()
+        {
+            _mockProdutoApplication.Setup(x => x.BuscaProdutosAsync(It.IsAny<Categoria>()))
+                                .ThrowsAsync(new CategoriaInvalidaException("Categoria inválida."));
+
+            var result = await _controller.BuscaProdutosPorCategoria(Categoria.Acompanhamento);
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Categoria inválida."));
+        }
+
+        [Test]
+        public async Task BuscaProdutosPorCategoria_ThrowsGenericException_ReturnsInternalServerError()
+        {
+            _mockProdutoApplication.Setup(x => x.BuscaProdutosAsync(It.IsAny<Categoria>()))
+                                .ThrowsAsync(new Exception("Erro inesperado"));
+
+            var result = await _controller.BuscaProdutosPorCategoria(Categoria.Lanche);
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Erro ao processar a requisição, tente novamente mais tarde."));
+        }
+
+        [Test]
+        public async Task RemoveProduto_ThrowsProdutoNaoCadastradoException_ReturnsNotFound()
+        {
+            int idProduto = 1;
+            _mockProdutoApplication.Setup(x => x.RemoveProdutoAsync(idProduto))
+                                .ThrowsAsync(new ProdutoNaoCadastradoException("Produto não encontrado."));
+
+            var result = await _controller.RemoveProduto(idProduto);
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Produto não encontrado."));
+        }
+
+        [Test]
+        public async Task RemoveProduto_ThrowsRemoveProdutoException_ReturnsBadRequest()
+        {
+            int idProduto = 1;
+            _mockProdutoApplication.Setup(x => x.RemoveProdutoAsync(idProduto))
+                                .ThrowsAsync(new RemoveProdutoException("Erro ao remover produto."));
+
+            var result = await _controller.RemoveProduto(idProduto);
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Erro ao remover produto."));
+        }
+
+        [Test]
+        public async Task RemoveProduto_ThrowsGenericException_ReturnsInternalServerError()
+        {
+            int idProduto = 1;
+            _mockProdutoApplication.Setup(x => x.RemoveProdutoAsync(idProduto))
+                                .ThrowsAsync(new Exception("Erro genérico."));
+
+            var result = await _controller.RemoveProduto(idProduto);
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Erro ao processar a requisição, tente novamente mais tarde."));
+        }
+
+        [Test]
+        public async Task AtualizarProduto_ThrowsProdutoNaoCadastradoException_ReturnsNotFound()
+        {
+            int idProduto = 1;
+            var produtoDto = new AtualizaProdutoDto() { Nome = "Bruna" };
+            _mockProdutoApplication.Setup(x => x.AtualizaProdutoAsync(idProduto, produtoDto))
+                                .ThrowsAsync(new ProdutoNaoCadastradoException("Produto não encontrado."));
+
+            var result = await _controller.AtualizarProduto(idProduto, produtoDto);
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Produto não encontrado."));
+        }
+
+        [Test]
+        public async Task AtualizarProduto_ThrowsAtualizaProdutoException_ReturnsBadRequest()
+        {
+            int idProduto = 1;
+            var produtoDto = new AtualizaProdutoDto() { Nome = "Bruna" };
+            _mockProdutoApplication.Setup(x => x.AtualizaProdutoAsync(idProduto, produtoDto))
+                                .ThrowsAsync(new AtualizaProdutoException("Erro ao atualizar produto."));
+
+            var result = await _controller.AtualizarProduto(idProduto, produtoDto);
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Erro ao atualizar produto."));
+        }
+
+        [Test]
+        public async Task AtualizarProduto_ThrowsGenericException_ReturnsInternalServerError()
+        {
+            int idProduto = 1;
+            var produtoDto = new AtualizaProdutoDto() { Nome = "Bruna" };
+            _mockProdutoApplication.Setup(x => x.AtualizaProdutoAsync(idProduto, produtoDto))
+                                .ThrowsAsync(new Exception("Erro genérico."));
+
+            var result = await _controller.AtualizarProduto(idProduto, produtoDto);
+
+            var statusCodeResult = result as ObjectResult;
+            Assert.That(statusCodeResult, Is.Not.Null);
+            Assert.That(statusCodeResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+            Assert.That(statusCodeResult?.Value, Is.EqualTo("Erro ao processar a requisição, tente novamente mais tarde."));
         }
     }
 }
