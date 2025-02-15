@@ -24,13 +24,15 @@ namespace Pedidos.Infrastructure.Broker
 
             var userName = Environment.GetEnvironmentVariable("BROKER_USERNAME");
             var password = Environment.GetEnvironmentVariable("BROKER_PASSWORD");
+            var virtualHost = Environment.GetEnvironmentVariable("BROKER_VIRTUALHOST");
 
             var factory = new ConnectionFactory
             {
                 HostName = hostName,
                 Port = port,
                 UserName = userName,
-                Password = password
+                Password = password,
+                VirtualHost = virtualHost
             };
 
             _connection = factory.CreateConnection();
