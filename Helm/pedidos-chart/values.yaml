@@ -9,12 +9,6 @@ apiNodePort: 30200
 
 # DB
 dbName: pedidos-db
-
-# Cronjobs
-# removerPedidosImage: 
-#   name: aleehcr/pedidos_remover_pedidos_job
-#   tag: 1
-
 # Config map
 configmap:
   name: pedidos-config-map
