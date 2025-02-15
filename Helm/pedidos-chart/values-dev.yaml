@@ -1,10 +1,23 @@
 namespace: dev
 
+# API
+apiName: pedidos-api
+apiImage: 
+  name: brunapisera/pedidos-api
+  tag: latest
+apiNodePort: 30200
+
+# DB
+dbName: pedidos_db
 # Config map
 configmap:
   name: pedidos-config-map
   data:
-    DB_HOST: svc-pedidos-db
+    DB_HOST: 
     DB_PORT: 5432
     DB_USER: postgres
-    DB_NAME: pedidosdb
+    DB_NAME: pedidos_db
+
+# Secret
+secret:
+  name: secret
