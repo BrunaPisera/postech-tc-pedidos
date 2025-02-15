@@ -95,4 +95,4 @@ jobs:
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: | 
           cd Infra 
-          terraform apply -var="rdsHost=${{ secrets.TF_VAR_RDS_HOST }}" -var="loadBalancerUri=${{ secrets.TF_VAR_LOAD_BALANCER_URI }}" -var="cognitoIssuerUrl=${{ secrets.TF_VAR_COG_ISSUER_URL }}" -auto-approve -input=false
+          terraform apply -var="rdsHost=${{ secrets.TF_VAR_RDS_HOST }}" -auto-approve -input=false
