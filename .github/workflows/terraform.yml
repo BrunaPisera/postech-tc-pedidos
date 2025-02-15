@@ -54,7 +54,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: | 
           cd Infra 
-          terraform plan -var="rdsHost=${{ secrets.TF_VAR_RDS_HOST }}" -var="loadBalancerUri=${{ secrets.TF_VAR_LOAD_BALANCER_URI }}" -var="cognitoIssuerUrl=${{ secrets.TF_VAR_COG_ISSUER_URL }}" -no-color -input=false
+          terraform plan -var="rdsHost=${{ secrets.TF_VAR_RDS_HOST }}" -no-color -input=false
         continue-on-error: true
 
       - name: Update Pull Request
