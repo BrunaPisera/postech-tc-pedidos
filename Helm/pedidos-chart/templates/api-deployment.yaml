@@ -25,6 +25,32 @@ spec:
               name: {{ .Values.configmap.name }}          
           - secretRef: 
               name: {{ .Values.secret.name }}
+        env:
+            - name: BROKER_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: pedidos-config-map
+                  key: BROKER_HOSTNAME
+            - name: BROKER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pedidos-config-map
+                  key: BROKER_PORT
+            - name: BROKER_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: pedidos-config-map
+                  key: BROKER_USERNAME
+            - name: BROKER_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: pedidos-config-map
+                  key: BROKER_PASSWORD
+            - name: BROKER_VIRTUALHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: pedidos-config-map
+                  key: BROKER_VIRTUALHOST
         resources:
           limits:
             cpu: "600m"

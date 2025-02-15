@@ -8,3 +8,8 @@ data:
   DB_PORT: "{{ .Values.configmap.data.DB_PORT }}"
   DB_USER: "{{ .Values.configmap.data.DB_USER }}"
   DB_NAME: "{{ .Values.configmap.data.DB_NAME }}"
+  BROKER_HOSTNAME: "{{ .Values.rabbitmq.hostname }}"
+  BROKER_PORT: "{{ .Values.rabbitmq.port }}"
+  BROKER_USERNAME: "{{ .Values.rabbitmq.username }}"
+  BROKER_PASSWORD: "{{ .Values.rabbitmq.password }}"
+  BROKER_VIRTUALHOST: "{{ .Values.rabbitmq.virtualhost }}"

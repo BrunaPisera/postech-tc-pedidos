@@ -21,3 +21,10 @@ configmap:
 # Secret
 secret:
   name: secret
+
+rabbitmq:
+  username: xtpbliuz 
+  password: XyZmex9NLanFsXqBs_7iYA8FlMBkz9DR
+  hostname: woodpecker.rmq.cloudamqp.com
+  port: 5672
+  virtualhost: xtpbliuz
