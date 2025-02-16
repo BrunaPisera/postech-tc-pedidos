@@ -25,4 +25,9 @@ resource "helm_release" "pedidos" {
     name  = "configmap.data.DB_HOST"
     value = var.rdsHost
   }
+
+  set {
+    name  = "rabbitmq.password"
+    value = var.brokerpassword
+  }
 }
