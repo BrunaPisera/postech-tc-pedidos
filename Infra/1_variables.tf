@@ -6,3 +6,8 @@ variable "rdsHost" {
   description = "Secret passed from GitHub Actions"
   type        = string
 }
+
+variable "brokerpassword" {
+  description = "Secret passed from GitHub Actions"
+  type        = string
+}
