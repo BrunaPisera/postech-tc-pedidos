@@ -12,8 +12,7 @@ namespace Pedidos.UseCases.Extensions
                 IdPedido = pedidoAggregate.Id,
                 CpfCliente = pedidoAggregate.Cliente?.CPF?.ToString(),
                 NomeCliente = pedidoAggregate.Cliente?.Nome,
-                ValorTotal = pedidoAggregate.CalcularValorPedido(),
-                Pago = pedidoAggregate.PagamentoConfirmado,              
+                ValorTotal = pedidoAggregate.CalcularValorPedido(),                        
                 HorarioRecebimento = pedidoAggregate.HorarioRecebimento
             };
 
