@@ -49,7 +49,7 @@ namespace Pedidos.API.Tests
             _mockBrokerPublisher.Verify(x => x.PublishMessage(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
-                "create.pedido"), Times.Once);
+                "pedidoRealizado"), Times.Once);
         }
 
         [Test]

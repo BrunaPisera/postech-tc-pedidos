@@ -13,7 +13,7 @@ namespace ControleDePedidos.API.Controllers
     {
         private readonly IPedidoUseCases PedidoUseCase;     
         private readonly IBrokerPublisher BrokerPublisher;
-        private readonly string Exchange = "acompanhamentoOperation";
+        private readonly string Exchange = "pedidosOperations";
         public PedidoController(IPedidoUseCases pedidoUseCase, IBrokerPublisher brokerPublisher)
         {
             PedidoUseCase = pedidoUseCase;
@@ -33,7 +33,7 @@ namespace ControleDePedidos.API.Controllers
             {
                 var pedidoRealizadoDto = await PedidoUseCase.RealizarPedidoAsync(pedidoDto);            
                
-                BrokerPublisher.PublishMessage(Exchange, JsonSerializer.Serialize(pedidoRealizadoDto), "create.pedido");
+                BrokerPublisher.PublishMessage(Exchange, JsonSerializer.Serialize(pedidoRealizadoDto), "pedidoRealizado");
 
                 return Ok();
             }
